@@ -69,6 +69,8 @@ PopData$ASYReturn[1:42] <- FemaleSurvival$ASYReturn
 PopData$Recruitment[1:42] <-NestlingSurvival$Recruitment
 
 
+write.csv(PopData, row.names=F, na="", file="file:///C:/Users/11arc/Documents/Masters Thesis Project/Vital Rates Paper/Yearly Vital Rates Estimates.csv")
+
 
 recruitmentParameters <- estBetaParams(mu=mean(PopData$Recruitment, na.rm=T), var=var(PopData$Recruitment, na.rm=T))
 SYReturnParameters<- estBetaParams(mu=mean(PopData$SYReturn, na.rm=T ), var=var(PopData$SYReturn, na.rm=T))
@@ -88,7 +90,7 @@ betaClutchSizeParametersASY <- estBetaParams(mu=(mean(PopData$clutchSizeASY, na.
 
 #1. get the correlation matrix of all the vital rates (not inluding the year!)
 c <- cor(PopData[,-c(1)], method = "spearman", use="na.or.complete")
-#Recruitment can't be correlated with anything here. so we will fill in those NAs with 0
+
 
 #2. make a matrix (W) who's columns are all the possible right eigenvectors of C
 eigC <- eigenUnOrdered(c)
@@ -417,8 +419,8 @@ SensRankPlot <- ggplot(vrdat4, aes(x=Rank, y=Total, fill=VitalRate))+
   geom_bar(position=c("fill"), stat="identity")+
   scale_x_discrete("Sensitivity ranking by vital rate", 
                    labels=c("VRMaxSens"="1st", "VR2MaxSens"="2nd", "VR3MaxSens"="3rd"))+
-  scale_fill_grey(start=0.3, end=0.8, labels=c("ASYReturnTot"= "Older return", 
-                                               "SYReturnTot"= "1-year-old return",
+  scale_fill_grey(start=0.3, end=0.8, labels=c("ASYReturnTot"= "ASY return", 
+                                               "SYReturnTot"= "SY return",
                                                "RecruitTot"= "Recruitment", 
                                                "FledgeTot"="Fledge rate", 
                                                "HatchTot"="Hatch rate"), 
@@ -447,7 +449,7 @@ vrdat5$Total[5] <- length(which(vrdat$MatrixMaxElas=="ASYSurvival"))
 #make the plot
 ElasRankPlot <-  ggplot(vrdat5 %>% filter (Total>0), aes(x=factor(1), y=Total, fill=MatrixElement))+
   geom_bar(position=c("fill"), stat="identity")+
-  scale_fill_grey(start=0.3, end=0.8, labels=c("ASYSurvival"= "Older survival", 
+  scale_fill_grey(start=0.3, end=0.8, labels=c("ASYSurvival"= "ASY return", 
                                                "NestlingSurvival"= "Nestling Survival"), 
                   name="Matrix Element")+
    scale_x_discrete("Elasticity ranking 1st", 
@@ -457,7 +459,7 @@ ElasRankPlot <-  ggplot(vrdat5 %>% filter (Total>0), aes(x=factor(1), y=Total, f
   #theme(legend.key.height = unit(2,"cm"))
 
 png(filename = "~/Masters Thesis Project/Vital Rates Paper/Figures/Elasticity Rankings Bar Plot_updated.png", 
-    width=300, height=500)
+    width=350, height=500)
 ElasRankPlot
 dev.off()
 
@@ -664,8 +666,8 @@ SensitivityAnalysis$Location[4:9]<- "Breeding"
 library(corrplot)
 library(RColorBrewer)
 M <- cor(PopData[,-c(1)], use="pairwise.complete.obs")
-colnames(M) <- c("1-year-old renests", "Older renests", "1-year-old clutch size", "Older clutch size", "Hatch rate", "Fledge rate", "1-year-old return", "Older return", "Recruitment")
-rownames(M) <- c("1-year-old renests", "Older renests", "1-year-old clutch size", "Older clutch size", "Hatch rate", "Fledge rate", "1-year-old return", "Older return", "Recruitment")
+colnames(M) <- c("SY renests", "ASY renests", "SY clutch size", "ASY clutch size", "Hatch rate", "Fledge rate", "SY return", "ASY return", "Recruitment")
+rownames(M) <- c("SY renests", "ASY renests", "SY clutch size", "ASY clutch size", "Hatch rate", "Fledge rate", "SY return", "ASY return", "Recruitment")
 
 CorMatrix <- corrplot(M, method = "circle", type="lower", order="alphabet", col=brewer.pal(n = 8, name = "RdYlBu"), tl.col = "black", tl.srt = 45)
 
@@ -705,3 +707,37 @@ ElasticityPlot2
 png(filename = "~/Masters Thesis Project/Vital Rates Paper/Figures/Sensitivity Analysis_correlated2.png", width=1000, height=1000)
 cowplot::plot_grid(SensitivityPlot2, ElasticityPlot2, align="v",nrow=2, ncol=1, labels=c("A", "B"))
 dev.off()
+
+
+
+
+
+
+
+
+
+########## Make some presentation quality graphs
+ggplot(vrdat4, aes(x=Rank, y=Total, fill=VitalRate))+
+  geom_bar(position=c("fill"), stat="identity")+
+  scale_fill_brewer(palette= "Paired",
+                   labels=c("RecruitTot"="Juvenile surivival", "ASYReturnTot"= "Older female survival", "SYReturnTot"="1-yr-old female survival", "FledgeTot"="Fledge rate", "HatchTot"="Hatch rate"))+
+  scale_x_discrete(labels=c("VRMaxSens"="1st", "VR2MaxSens"="2nd", "VR3MaxSens"="3rd"))+
+  
+  labs(y="Proportion \n of simulations", fill="", x= "Sensitivity ranking by vital rate")+
+  ggthemes::theme_few(base_size = 22)+
+  theme(axis.title.y=element_text(angle=0, vjust=0.5)) 
+  
+
+ggsave(filename='~/Masters Thesis Project/BGRS symposium presentation/Sensitivity Rankings Plot.jpeg', width=9, height=6, units="in", device="jpeg")
+
+
+
+ggplot(vrdat5 %>% filter (Total>0), aes(x=factor(1), y=Total, fill=MatrixElement))+
+  geom_bar(position=c("fill"), stat="identity")+
+  scale_fill_brewer(labels=c("ASYSurvival"= "Older female survival", 
+                                               "NestlingSurvival"= "Nestling Survival"), palette="Accent")+
+  scale_x_discrete("Elasticity ranking 1st", 
+                   labels=c("1"=""))+
+  ylab("Proportion \n of simulations")+
+  ggthemes::theme_few(base_size = 20)
+#theme(legend.key.height = unit(2,"cm"))

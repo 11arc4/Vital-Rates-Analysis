@@ -180,8 +180,8 @@ SensRankPlot <- ggplot(vrdat4, aes(x=Rank, y=Total, fill=VitalRate))+
   geom_bar(position=c("fill"), stat="identity")+
   scale_x_discrete("Sensitivity ranking by vital rate", 
                    labels=c("VRMaxSens"="1st", "VR2MaxSens"="2nd", "VR3MaxSens"="3rd"))+
-  scale_fill_grey(start=0.3, end=0.8, labels=c("ASYReturnTot"= "Older return", 
-                                               "SYReturnTot"= "1-year-old return",
+  scale_fill_grey(start=0.3, end=0.8, labels=c("ASYReturnTot"= "ASY return", 
+                                               "SYReturnTot"= "SY return",
                                                "RecruitTot"= "Recruitment", 
                                                "FledgeTot"="Fledge rate", 
                                                "HatchTot"="Hatch rate"), 
@@ -210,18 +210,18 @@ vrdat5$Total[5] <- length(which(vrdat$MatrixMaxElas=="ASYSurvival"))
 #make the plot
 ElasRankPlot <-  ggplot(vrdat5 %>% filter (Total>0), aes(x=factor(1), y=Total, fill=MatrixElement))+
   geom_bar(position=c("fill"), stat="identity")+
-  scale_fill_grey(start=0.3, end=0.8, labels=c("ASYSurvival"= "Older survival", 
+  scale_fill_grey(start=0.3, end=0.8, labels=c("ASYSurvival"= "ASY return", 
                                                "NestlingSurvival"= "Nestling survival"), 
                   name="Matrix Element")+
   scale_x_discrete("Elasticity ranking 1st \n by vital rate", 
                    labels=c("1"=""))+
   
-  ylab("Proportion")+
+  ylab("Proportion \nof simulations")+
   
   ggthemes::theme_few(base_size = 20)
 
 png(filename = "~/Masters Thesis Project/Vital Rates Paper/Figures/Elasticity Rankings Bar Plot_uncorrelatedUPDATED.png", 
-    width=300, height=500)
+    width=350, height=500)
 ElasRankPlot
 dev.off()
 

@@ -87,3 +87,4 @@ ggplot(AllResults, aes(x=Year))+
 
 write.csv(AllResults, file="Model Averaged Yearly Apparent Survival for all records to get recruitment.csv", row.names = F, na="")
 
+cleanup(ask=F)
