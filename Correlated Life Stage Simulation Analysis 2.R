@@ -666,17 +666,15 @@ SensitivityAnalysis$Location[4:9]<- "Breeding"
 library(corrplot)
 library(RColorBrewer)
 M <- cor(PopData[,-c(1)], use="pairwise.complete.obs")
-colnames(M) <- c("SY renests", "ASY renests", "SY clutch size", "ASY clutch size", "Hatch rate", "Fledge rate", "SY return", "ASY return", "Recruitment")
-rownames(M) <- c("SY renests", "ASY renests", "SY clutch size", "ASY clutch size", "Hatch rate", "Fledge rate", "SY return", "ASY return", "Recruitment")
+colnames(M) <- c("Nests per SY female", "Nests per ASY female", "SY clutch size", "ASY clutch size", "Hatch rate", "Fledge rate", "SY female return", "ASY female return", "Recruitment")
+rownames(M) <- c("Nests per SY female", "Nests per ASY female", "SY clutch size", "ASY clutch size", "Hatch rate", "Fledge rate", "SY female return", "ASY female return", "Recruitment")
 
-CorMatrix <- corrplot(M, method = "circle", type="lower", order="alphabet", col=brewer.pal(n = 8, name = "RdYlBu"), tl.col = "black", tl.srt = 45)
+CorMatrix <- corrplot(M, method = "circle", type="lower", order="original", col=brewer.pal(n = 8, name = "RdYlBu"), tl.col = "black", tl.srt = 45)
 
 
-png(filename = "~/Masters Thesis Project/Vital Rates Paper/Figures/Correlation Matrix Plot_updated.png", 
-     width=500, height=500)
+
 corrplot(M, method = "circle", type="lower", order="alphabet", col=brewer.pal(n = 8, name = "RdBu"), tl.col = "black", tl.srt = 45)
 
-dev.off()
 
 #Sensitivity analysis plot for my paper
 SensitivityPlot2 <- ggplot(SensitivityAnalysis, aes(x=Sensitivity, y=R2_S))+
